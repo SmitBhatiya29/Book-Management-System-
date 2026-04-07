@@ -10,6 +10,7 @@ import com.springboot.BookManagementSystem.mapper.BookMapper;
 import com.springboot.BookManagementSystem.model.Book;
 import com.springboot.BookManagementSystem.repository.BookRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -17,14 +18,16 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
     public void addBook(BookReqDto bookReqDto) {
-
+        log.info("Adding a new book...");
         Book checkBook = bookRepository.findByISBN(bookReqDto.ISBN());
         if(checkBook != null){
+            log.warn("Failed to add book...ISBN already exists.");
             throw  new AlreadyExistsException("Book is Already eists of this ISBN number");
         }
 
@@ -35,10 +38,12 @@ public class BookService {
         book.setPublicationYear(bookReqDto.publicationYear());
         bookRepository.save(book);
 
+        log.info("Successfully added book ");
+
     }
 
     public BookPagResDto getAllBooks(int page, int size) {
-
+        log.info("Fetching all books");
         Pageable pageable = PageRequest.of(page,size);
         Page<Book> pageBooks = bookRepository.findAll(pageable);
         long totalRecords =pageBooks.getTotalElements();
@@ -49,6 +54,7 @@ public class BookService {
                 .stream()
                 .map(BookMapper:: mapToDto)
                 .toList();
+        log.info("Successfully fetched books.");
         return new BookPagResDto(
                 listDto,
                 totalRecords,
@@ -58,16 +64,21 @@ public class BookService {
     }
 
     public BookResDto getBookByISBN(long isbn) {
+        log.info("Fetching book by ISBN");
         Book book = bookRepository.findByISBN(isbn);
         if(book == null){
+            log.warn("Fetch failed. Book not found for Requesting ISBN");
             throw new ResourceNotFoundException("Book Not Found For This ISBN Number");
         }
+        log.info("Successfully found book with ISBN");
         return  BookMapper.mapToDto(book);
     }
 
     public void updateBookByISBN(long isbn, BookUpdateReqDto bookUpdateReqDto) {
+        log.info("Updating to book with ISBN Number");
         Book book = bookRepository.findByISBN(isbn);
         if(book == null){
+            log.warn("Update failed. Book not found for This ISBN");
             throw new ResourceNotFoundException("Book Not Found For This ISBN Number So can not update.");
         }
 
@@ -82,13 +93,17 @@ public class BookService {
         }
 
         bookRepository.save(book);
+        log.info("Successfully updated book ");
     }
 
     public void deleteBookByISBN(long isbn) {
+        log.info("Deleteing the book ");
         Book book = bookRepository.findByISBN(isbn);
         if(book == null){
+            log.warn("Deletion failed. Book not found for Requesting ISBN");
             throw new ResourceNotFoundException("Book Not Found For This ISBN Number So can not delete.");
         }
         bookRepository.delete(book);
+        log.info("Successfully deleted book");
     }
 }
