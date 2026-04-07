@@ -5,18 +5,12 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.Year;
 
-public record BookReqDto(
-        @NotNull
-        @NotBlank
+public record BookUpdateReqDto(
+
         String Title,
-        @NotNull
-        @NotBlank
         String Author,
-        @NotNull
-        @NotBlank
         long ISBN,
-        @NotNull
-        @NotBlank
         Year publicationYear
+
 ) {
 }

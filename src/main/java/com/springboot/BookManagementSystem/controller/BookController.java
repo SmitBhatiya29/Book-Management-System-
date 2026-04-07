@@ -2,7 +2,10 @@ package com.springboot.BookManagementSystem.controller;
 
 import com.springboot.BookManagementSystem.dto.BookPagResDto;
 import com.springboot.BookManagementSystem.dto.BookReqDto;
+import com.springboot.BookManagementSystem.dto.BookResDto;
+import com.springboot.BookManagementSystem.dto.BookUpdateReqDto;
 import com.springboot.BookManagementSystem.service.BookService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +18,7 @@ public class BookController {
 
     private final BookService bookService;
     @PostMapping("/add")
-    public ResponseEntity<?> addBook(@RequestBody BookReqDto bookReqDto) {
+    public ResponseEntity<?> addBook(@Valid @RequestBody BookReqDto bookReqDto) {
         bookService.addBook(bookReqDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -25,5 +28,21 @@ public class BookController {
                                      @RequestParam(value = "size",required = false,defaultValue = "5") int size){
         return bookService.getAllBooks(page,size);
     }
+
+    @GetMapping("/book-by-isbn")
+    public BookResDto getBookByISBN(@RequestParam(value = "isbn" , required = true ) long isbn){
+        return bookService.getBookByISBN(isbn);
+    }
+
+    @PutMapping("/update/{isbn}")
+    public ResponseEntity<?> updateBookByISBN(
+            @PathVariable long isbn,
+            @RequestBody BookUpdateReqDto bookUpdateReqDto
+    ){
+        bookService.updateBookByISBN(isbn,bookUpdateReqDto);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
 
 }
