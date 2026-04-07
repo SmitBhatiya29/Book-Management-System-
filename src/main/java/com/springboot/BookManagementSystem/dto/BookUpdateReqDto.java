@@ -9,7 +9,6 @@ public record BookUpdateReqDto(
 
         String Title,
         String Author,
-        long ISBN,
         Year publicationYear
 
 ) {

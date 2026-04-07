@@ -36,11 +36,17 @@ public class BookController {
 
     @PutMapping("/update/{isbn}")
     public ResponseEntity<?> updateBookByISBN(
-            @PathVariable long isbn,
+            @PathVariable Long isbn,
             @RequestBody BookUpdateReqDto bookUpdateReqDto
     ){
         bookService.updateBookByISBN(isbn,bookUpdateReqDto);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @DeleteMapping("/delete/{isbn}")
+    public ResponseEntity<String> deleteBookByISBN(@PathVariable long isbn){
+        bookService.deleteBookByISBN(isbn);
+        return ResponseEntity.ok("Book Deleted successfully.");
     }
 
 

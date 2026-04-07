@@ -87,4 +87,12 @@ public class BookService {
 
 
     }
+
+    public void deleteBookByISBN(long isbn) {
+        Book book = bookRepository.findByISBN(isbn);
+        if(book == null){
+            throw new ResourceNotFoundException("Book Not Found For This ISBN Number So can not delete.");
+        }
+        bookRepository.delete(book);
+    }
 }

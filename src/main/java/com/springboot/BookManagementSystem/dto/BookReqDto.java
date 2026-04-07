@@ -13,10 +13,8 @@ public record BookReqDto(
         @NotBlank
         String Author,
         @NotNull
-        @NotBlank
-        long ISBN,
+        Long ISBN,
         @NotNull
-        @NotBlank
         Year publicationYear
 ) {
 }

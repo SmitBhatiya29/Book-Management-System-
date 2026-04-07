@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.jpa.repository.EntityGraph;
+
 
 import java.time.Instant;
 import java.time.Year;
@@ -34,10 +34,10 @@ public class Book {
 
     @NotNull
     @Column(nullable = false, unique = true)
-    private long ISBN;
+    private Long ISBN;
 
     @NotNull
-    @Column(name = "publication_year",nullable = false)
+    @Column(name = "publication_year", nullable = false)
     private Year publicationYear;
 
     @CreationTimestamp
