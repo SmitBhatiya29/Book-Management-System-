@@ -1,5 +1,6 @@
 package com.springboot.BookManagementSystem.ServiceTest;
 
+import com.springboot.BookManagementSystem.dto.BookPagResDto;
 import com.springboot.BookManagementSystem.dto.BookResDto;
 import com.springboot.BookManagementSystem.exceptions.ResourceNotFoundException;
 import com.springboot.BookManagementSystem.model.Book;
@@ -12,8 +13,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.Year;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
@@ -68,5 +74,38 @@ public class BookServiceTest {
         Mockito.verify(bookRepository, Mockito.times(1)).findByISBN(invalidIsbn);
     }
 
+    @Test
+    public void getAllBooksTest() {
+        Book book1 = new Book();
+        book1.setTitle("Somthing");
+        book1.setAuthor("Nothing");
+        book1.setISBN(123456L);
+        book1.setPublicationYear(Year.now());
+
+        Book book2 = new Book();
+        book2.setTitle("C");
+        book2.setAuthor("Smit");
+        book2.setISBN(654321L);
+        book2.setPublicationYear(Year.now());
+
+        List<Book> listBook = List.of(book1, book2);
+
+        Page<Book> pageBook = new PageImpl<>(listBook);
+        int page = 0;
+        int size = 2;
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Mockito.when(bookRepository.findAll(pageable)).thenReturn(pageBook);
+
+
+        BookPagResDto result = bookService.getAllBooks(page, size);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(2, result.totalRecords()); // Based on new BookPagResDto(listDto, totalRecords, totalPages)
+        Assertions.assertEquals(1, result.totalPages());
+
+        Mockito.verify(bookRepository, Mockito.times(1)).findAll(pageable);
+    }
 
 }
